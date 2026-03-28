@@ -7,7 +7,7 @@
 ### Quick Install (Linux/macOS)
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/uintptr/hacli/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/uintptr/hacli/master/scripts/install.sh | bash
 ```
 
 This installs `hacli` to `~/.local/bin`.
