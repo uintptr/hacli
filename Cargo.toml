@@ -1,0 +1,50 @@
+[package]
+name = "hacli"
+version = "0.1.0"
+edition = "2024"
+description = "Home Assistant CLI"
+
+[dependencies]
+clap = { version = "4", features = ["derive", "env"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.13", features = ["json", "query"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1.1"
+thiserror = "2"
+anyhow = "1"
+tabled = "0.20"
+dirs = "6"
+chrono = { version = "0.4", features = ["serde"] }
+secrecy = { version = "0.10", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenvy = "0.15"
+rpassword = "7"
+
+[dev-dependencies]
+mockito = "1"
+tokio = { version = "1", features = ["full"] }
+
+[lints.clippy]
+arithmetic_side_effects = "warn"
+clone_on_ref_ptr = "warn"
+dbg_macro = "warn"
+exit = "warn"
+expect_used = "warn"
+filetype_is_file = "warn"
+indexing_slicing = "warn"
+inefficient_to_string = "warn"
+large_enum_variant = "warn"
+lossy_float_literal = "warn"
+manual_ok_or = "warn"
+mem_forget = "warn"
+missing_errors_doc = "allow"
+needless_pass_by_ref_mut = "warn"
+or_fun_call = "warn"
+panic = "warn"
+pedantic = { level = "warn", priority = -1 }
+todo = "warn"
+unimplemented = "warn"
+unwrap_used = "warn"
+use_debug = "warn"
