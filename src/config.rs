@@ -150,10 +150,7 @@ mod tests {
 
     /// Shorthand: resolve overrides against an empty config file so tests
     /// never hit the real filesystem.
-    fn resolve_empty(
-        url: Option<&str>,
-        token: Option<&str>,
-    ) -> Result<Config, CliError> {
+    fn resolve_empty(url: Option<&str>, token: Option<&str>) -> Result<Config, CliError> {
         Config::resolve(
             url.map(String::from),
             token.map(String::from),
@@ -163,21 +160,15 @@ mod tests {
 
     #[test]
     fn load_prefers_override_over_file() {
-        let config = resolve_empty(
-            Some("http://ha.local:8123"),
-            Some("my-token"),
-        )
-        .expect("config should load successfully");
+        let config = resolve_empty(Some("http://ha.local:8123"), Some("my-token"))
+            .expect("config should load successfully");
         assert_eq!(config.url, "http://ha.local:8123");
     }
 
     #[test]
     fn load_strips_trailing_slash_from_url() {
-        let config = resolve_empty(
-            Some("http://ha.local:8123/"),
-            Some("tok"),
-        )
-        .expect("config should load successfully");
+        let config = resolve_empty(Some("http://ha.local:8123/"), Some("tok"))
+            .expect("config should load successfully");
         assert_eq!(config.url, "http://ha.local:8123");
     }
 
