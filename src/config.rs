@@ -145,6 +145,7 @@ pub fn write_config_file(cfg: &ConfigFile) -> Result<PathBuf, CliError> {
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::expect_used, clippy::indexing_slicing)]
 mod tests {
     use super::*;
 

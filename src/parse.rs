@@ -66,6 +66,7 @@ pub fn parse_fields_to_object(fields: &[String]) -> Result<serde_json::Value, St
 // ---------------------------------------------------------------------------
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::expect_used, clippy::indexing_slicing)]
 mod tests {
     use super::*;
 
