@@ -2,6 +2,22 @@
 
 `hacli` is a Rust CLI for the Home Assistant REST API.
 
+## Installation
+
+### Quick Install (Linux/macOS)
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/uintptr/hacli/main/scripts/install.sh | bash
+```
+
+This installs `hacli` to `~/.local/bin`.
+
+### From Source
+
+```sh
+cargo install --git https://github.com/uintptr/hacli hacli
+```
+
 ## Configuration
 
 Credentials are resolved in this order (highest wins):
