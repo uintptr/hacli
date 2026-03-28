@@ -1,0 +1,87 @@
+name: Build
+
+on:
+    push:
+        tags: ["v*"]
+    workflow_dispatch:
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                include:
+                    - os: ubuntu-latest
+                      target: x86_64-unknown-linux-musl
+                      artifact_suffix: linux-amd64
+                    - os: macos-latest
+                      target: x86_64-apple-darwin
+                      artifact_suffix: darwin-amd64
+                    - os: macos-latest
+                      target: aarch64-apple-darwin
+                      artifact_suffix: darwin-arm64
+                    - os: ubuntu-latest
+                      target: aarch64-unknown-linux-musl
+                      artifact_suffix: linux-arm64
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Rust target
+              run: rustup target add ${{ matrix.target }}
+
+            - name: Install Linux musl tools
+              if: matrix.target == 'x86_64-unknown-linux-musl'
+              run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+            - name: Install Linux ARM64 musl cross-compilation tools
+              if: matrix.target == 'aarch64-unknown-linux-musl'
+              run: |
+                  sudo apt-get update && sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu
+                  echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+                  echo "CC_aarch64_unknown_linux_musl=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+
+            - name: Build
+              run: cargo build --release --target ${{ matrix.target }}
+
+            - name: Run tests
+              run: cargo test --release --target ${{ matrix.target }}
+
+            - name: Check formatting
+              run: cargo fmt --all -- --check
+
+            - name: Run clippy
+              run: cargo clippy --no-deps --all-targets --all-features -- -D warnings
+
+            - name: Rename binary for release
+              if: startsWith(github.ref, 'refs/tags/')
+              run: cp target/${{ matrix.target }}/release/hacli target/${{ matrix.target }}/release/hacli-${{ matrix.artifact_suffix }}
+
+            - name: Upload release binary
+              if: startsWith(github.ref, 'refs/tags/')
+              uses: actions/upload-artifact@v4
+              with:
+                  name: binaries-${{ matrix.artifact_suffix }}
+                  path: target/${{ matrix.target }}/release/hacli-*
+
+    release:
+        needs: build
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/')
+        permissions:
+            contents: write
+
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  path: artifacts
+
+            - name: Create Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: artifacts/**/*
+                  generate_release_notes: true
