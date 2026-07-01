@@ -59,6 +59,13 @@ async fn main() {
     if let Err(e) = commands::run_command(cli.command, cli.url, cli.token, cli.output).await {
         tracing::error!("{e}");
         eprintln!("Error: {e}");
+        // Walk and print the underlying source chain so the root cause is not
+        // hidden behind a terse top-level message (e.g. reqwest's "builder error").
+        let mut source = std::error::Error::source(&e);
+        while let Some(cause) = source {
+            eprintln!("  caused by: {cause}");
+            source = cause.source();
+        }
         std::process::exit(1);
     }
 }
